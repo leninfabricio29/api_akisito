@@ -1,0 +1,14 @@
+{% extends "emails/base.html" %}
+{% block header %}✉️ VERIFICA TU CORREO{% endblock %}
+{% block content %}
+<p class="greeting">¡Hola! 👋</p>
+<p>Estás creando tu cuenta{% if is_business %} de negocio{% endif %} en <strong>Akisito</strong>. Ingresa este código en la app para continuar:</p>
+<div class="code-block">{{ code }}</div>
+<div class="details">
+  <p>⏱️ <strong>Válido por:</strong> {{ expires_minutes }} minutos</p>
+  <p>🔐 <strong>Uso único:</strong> el código deja de funcionar al usarse o tras varios intentos fallidos.</p>
+</div>
+<div class="info-box" style="background-color: #fff3cd; border-color: #ffc107;">
+  <p style="color: #856404;">⚠️ Si no intentaste crear una cuenta, ignora este mensaje.</p>
+</div>
+{% endblock %}

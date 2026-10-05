@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-xl">
+    <p class="mb-4">Saldo actual: <strong>{{ membership.points_balance }} pts</strong>. El ajuste queda registrado en el historial con tu usuario.</p>
+    <form method="post" class="flex flex-col gap-4">
+        {% csrf_token %}
+        {% for field in form %}
+            {% include "unfold/helpers/field.html" %}
+        {% endfor %}
+        <div class="flex gap-2">
+            <button type="submit" class="bg-primary-600 font-medium px-3 py-2 rounded-default text-white">Registrar ajuste</button>
+            <a href="{% url 'admin:loyalty_membership_change' membership.pk %}" class="border border-base-200 px-3 py-2 rounded-default">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

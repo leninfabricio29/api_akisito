@@ -1,0 +1,20 @@
+{% extends "emails/base.html" %}
+{% block header %}✅ ¡BIENVENIDO/A A AKISITO!{% endblock %}
+{% block content %}
+<p class="greeting">¡Bienvenido/a{% if name %}, <strong>{{ name }}</strong>{% endif %}! 🎉</p>
+{% if is_business %}
+<p>Tu cuenta de negocio fue creada. Completa en la app los datos de tu negocio (RUC, categoría y ubicación) para enviarlo a revisión.</p>
+<div class="info-box" style="background-color: #fff3cd; border-color: #ffc107;">
+  <p style="color: #856404;">⏳ Cuando lo aprobemos podrás imprimir tu QR y crear recompensas.</p>
+</div>
+{% else %}
+<p>Tu cuenta fue creada. Completa tu perfil en la app, escanea el QR de tus negocios favoritos al llegar, acumula puntos y canjéalos por recompensas.</p>
+<div class="info-box" style="background-color: #d4edda; border-color: #28a745;">
+  <p style="color: #155724;">✅ Tu cuenta está activa y lista para usar.</p>
+</div>
+{% endif %}
+<div class="details">
+  <p>📧 <strong>Correo registrado:</strong> {{ email }}</p>
+  <p>📅 <strong>Fecha de creación:</strong> {% now "j \d\e F \d\e Y" %}</p>
+</div>
+{% endblock %}

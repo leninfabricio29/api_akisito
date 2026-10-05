@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block header %}📋 NEGOCIO EN REVISIÓN{% endblock %}
+{% block content %}
+<p class="greeting">Hola{% if name %}, <strong>{{ name }}</strong>{% endif %} 👋</p>
+<p>Recibimos el registro de <strong>{{ business_name }}</strong>. Nuestro equipo validará el RUC y te avisaremos por correo cuando tu negocio esté aprobado.</p>
+<div class="info-box" style="background-color: #fff3cd; border-color: #ffc107;">
+  <p style="color: #856404;">⏳ Mientras tanto puedes completar tu perfil, subir fotos y preparar tus recompensas.</p>
+</div>
+{% endblock %}

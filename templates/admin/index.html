@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% load i18n unfold %}
+
+{% block title %}Dashboard | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-6">
+    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {% for kpi in kpis %}
+            {% component "unfold/components/card.html" with href=kpi.href icon=kpi.icon %}
+                {% component "unfold/components/text.html" %}{{ kpi.title }}{% endcomponent %}
+                {% component "unfold/components/title.html" %}{{ kpi.value }}{% endcomponent %}
+            {% endcomponent %}
+        {% endfor %}
+    </div>
+
+    {% component "unfold/components/card.html" with title="Check-ins con puntos · últimos 14 días" %}
+        {% component "unfold/components/chart/bar.html" with data=checkins_chart height=260 %}{% endcomponent %}
+    {% endcomponent %}
+
+    <div class="grid gap-6 grid-cols-1 lg:grid-cols-2">
+        {% component "unfold/components/card.html" with title="Negocios pendientes de aprobación" %}
+            {% if pending_businesses.rows %}
+                {% component "unfold/components/table.html" with table=pending_businesses card_included=1 striped=1 %}{% endcomponent %}
+            {% else %}
+                {% component "unfold/components/text.html" %}No hay negocios pendientes. 🎉{% endcomponent %}
+            {% endif %}
+        {% endcomponent %}
+
+        {% component "unfold/components/card.html" with title="Posible fraude (5+ check-ins rechazados en 7 días)" %}
+            {% if suspicious_clients.rows %}
+                {% component "unfold/components/table.html" with table=suspicious_clients card_included=1 striped=1 %}{% endcomponent %}
+            {% else %}
+                {% component "unfold/components/text.html" %}Sin actividad sospechosa.{% endcomponent %}
+            {% endif %}
+        {% endcomponent %}
+    </div>
+</div>
+{% endblock %}

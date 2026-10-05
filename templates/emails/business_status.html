@@ -1,0 +1,15 @@
+{% extends "emails/base.html" %}
+{% block header %}{% if approved %}🎉 NEGOCIO APROBADO{% else %}📋 ESTADO DE TU NEGOCIO{% endif %}{% endblock %}
+{% block content %}
+<p class="greeting">Hola{% if name %}, <strong>{{ name }}</strong>{% endif %}</p>
+{% if approved %}
+<p><strong>{{ business_name }}</strong> fue aprobado. Ya puedes imprimir tu QR desde la app, colocarlo en tu local y crear recompensas para tus clientes.</p>
+<div class="info-box" style="background-color: #d4edda; border-color: #28a745;">
+  <p style="color: #155724;">✅ Tus clientes ya pueden encontrarte y sumar puntos en cada visita.</p>
+</div>
+{% else %}
+<p>El estado de <strong>{{ business_name }}</strong> cambió a: <strong>{{ status_label }}</strong>.</p>
+{% if reason %}<div class="details"><p>📝 <strong>Motivo:</strong> {{ reason }}</p></div>{% endif %}
+<p>Si crees que es un error, responde a soporte con la documentación de tu RUC.</p>
+{% endif %}
+{% endblock %}
