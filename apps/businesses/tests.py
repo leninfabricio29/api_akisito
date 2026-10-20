@@ -29,6 +29,24 @@ class DirectoryTests(TestCase):
         self.assertEqual([b["name"] for b in response.data["results"]], ["Café Cerca"])
         self.assertEqual(response.data["results"][0]["distance_m"], 0)
 
+    def test_listing_is_shuffled_per_hour(self):
+        for i in range(10):
+            make_business(name=f"Negocio {i}")
+        created = list(Business.objects.approved().order_by("created_at", "pk").values_list("name", flat=True))
+
+        def names(when, **params):
+            with mock.patch("apps.businesses.views.timezone.now", return_value=when):
+                return [b["name"] for b in api_for().get("/api/v1/businesses/", params).data["results"]]
+
+        now = timezone.now()
+        for params in ({}, {"ordering": "-rating_avg"}):
+            this_hour = names(now, **params)
+            self.assertCountEqual(this_hour, created)
+            self.assertNotEqual(this_hour, created)
+            self.assertNotEqual(this_hour, created[::-1])
+            self.assertEqual(this_hour, names(now, **params))
+            self.assertNotEqual(this_hour, names(now + timedelta(hours=1), **params))
+
     def test_client_sees_favorite_and_points(self):
         user = make_client()
         api = api_for(user)

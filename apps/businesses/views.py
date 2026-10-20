@@ -8,7 +8,9 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import generics, mixins, serializers, status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -63,6 +65,16 @@ class NearbyQuerySerializer(serializers.Serializer):
     )
 
 
+class ShuffledOrderingFilter(OrderingFilter):
+    """`?ordering=` respeta el campo pedido y desempata con el orden aleatorio por hora."""
+
+    def filter_queryset(self, request, queryset, view):
+        ordering = self.get_ordering(request, queryset, view)
+        if ordering:
+            return queryset.order_by(*ordering, "shuffle", "pk")
+        return queryset
+
+
 class BusinessViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Directorio público de negocios aprobados.
@@ -73,6 +85,7 @@ class BusinessViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter, ShuffledOrderingFilter]
     filterset_fields = ["category"]
     search_fields = ["name", "description", "address", "category__name"]
     ordering_fields = ["name", "rating_avg", "created_at"]
