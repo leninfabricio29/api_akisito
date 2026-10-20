@@ -1,10 +1,12 @@
 import base64
 
 from django.core import signing
-from django.db.models import Exists, OuterRef, Subquery
+from django.db.models import CharField, Exists, OuterRef, Subquery, Value
+from django.db.models.functions import MD5, Cast, Concat
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import generics, mixins, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -76,10 +78,14 @@ class BusinessViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = ["name", "rating_avg", "created_at"]
 
     def get_queryset(self):
+        # Orden aleatorio con semilla por hora: cambia cada hora pero se mantiene
+        # estable entre páginas, así no se repiten ni se pierden negocios al paginar.
+        seed = timezone.now().strftime("%Y%m%d%H")
         queryset = (
             Business.objects.approved()
             .select_related("category")
-            .order_by("-rating_avg", "name")
+            .annotate(shuffle=MD5(Concat(Cast("pk", CharField()), Value(seed))))
+            .order_by("shuffle", "pk")
         )
         return annotate_for_client(queryset, self.request.user)
 
