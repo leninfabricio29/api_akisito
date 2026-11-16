@@ -89,7 +89,8 @@ class BusinessViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ["category"]
     search_fields = ["name", "description", "address", "category__name"]
     ordering_fields = ["name", "rating_avg", "created_at"]
-
+    default_ordering = ["name"]
+    
     def get_queryset(self):
         # Orden aleatorio con semilla por hora: cambia cada hora pero se mantiene
         # estable entre páginas, así no se repiten ni se pierden negocios al paginar.
